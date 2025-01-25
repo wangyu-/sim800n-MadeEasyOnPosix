@@ -1,7 +1,7 @@
-#include <windows.h>
-#include <gdiplus.h>
+//#include <windows.h>
+//#include <gdiplus.h>
 #include <fcntl.h>
-#include <io.h>
+//#include <io.h>
 
 #include "lcdpainter.h"
 #include "json.h"
@@ -39,7 +39,7 @@ MyLCDView::~MyLCDView()
 
 void MyLCDView::loadStripeTexture(const wchar_t* texpath, SDL_Renderer* render)
 {
-    Gdiplus::GdiplusStartupInput gdiplusStartupInput;
+    /*Gdiplus::GdiplusStartupInput gdiplusStartupInput;
     ULONG_PTR gdiplusToken;
     GdiplusStartup(&gdiplusToken, &gdiplusStartupInput, NULL);
 
@@ -64,14 +64,14 @@ void MyLCDView::loadStripeTexture(const wchar_t* texpath, SDL_Renderer* render)
         free(buffer);
         delete bitmap;
     }
-    Gdiplus::GdiplusShutdown(gdiplusToken);
+    Gdiplus::GdiplusShutdown(gdiplusToken);*/
 }
 
 #define COPYMOVESSD(dst, src, step) fLCDStripes[dst] = fLCDStripes[src]; fLCDStripes[dst].left += step
 
 void MyLCDView::initLCDStripe(const wchar_t* jsonpath)
 {
-    struct _stat64 st;
+    /*struct _stat64 st;
     if (_wstat64(jsonpath, &st) == -1) {
         return;
     }
@@ -207,7 +207,7 @@ void MyLCDView::initLCDStripe(const wchar_t* jsonpath)
     fLCDHeight = gap.lcd.height;
 
     fLCDPixelPoint.x = Pixel.left;
-    fLCDPixelPoint.y = Pixel.top;
+    fLCDPixelPoint.y = Pixel.top;*/
 }
 
 void MyLCDView::setPixel(int x, int y, bool on)
@@ -222,13 +222,15 @@ void MyLCDView::paint(SDL_Renderer* render, bool lcdon)
     SDL_RenderClear(render);
     SDL_SetTextureBlendMode(fLCDTexture, SDL_BLENDMODE_BLEND);
     if (lcdon) {
-        SDL_RenderCopy(render, fLCDTexture, &fLCDEmpty, &SDL_Rect{ 0, 0, fLCDEmpty.w,fLCDEmpty.h });
+        auto a=SDL_Rect{ 0, 0, fLCDEmpty.w,fLCDEmpty.h };
+        SDL_RenderCopy(render, fLCDTexture, &fLCDEmpty, &a);
     }
     for (int y = 79; y >= 0; y--) {
         bool pixel = fPixel[160 * y];
         if (pixel) {
             TLCDStripe* item = &fLCDStripes[y];
-            SDL_RenderCopy(render, fLCDTexture, &item->texture, &SDL_Rect{item->left,item->top,item->texture.w,item->texture.h});
+            auto a=SDL_Rect{item->left,item->top,item->texture.w,item->texture.h};
+            SDL_RenderCopy(render, fLCDTexture, &item->texture, &a);
         }
     }
     SDL_Rect dest{ fLCDPixelPoint.x, fLCDPixelPoint.y, fLCDPixel.w, fLCDPixel.h };
