@@ -4,10 +4,13 @@
 #include <stdio.h>
 #include "lcdpainter.h"
 #include "Vspdc1016.h"
+#include "Vspdc1016___024root.h"
 
 // screen dimensions
 const int H_RES = 160;
 const int V_RES = 80;
+
+double sc_time_stamp(){return 0;}
 
 typedef union Pixel {
     struct {
@@ -160,12 +163,12 @@ int main(int argc, char* argv[]) {
     bool oldcp = top->lcd_CP;
     bool oldlp = top->lcd_LP;
     bool oldfp = top->lcd_FP;
-    bool oldclk = top->spdc1016__DOT__clk;
+    bool oldclk = top->rootp->spdc1016__DOT__clk;
     uint8_t olddi = 0;
-    uint16_t oldpc = top->spdc1016__DOT__cpu__DOT__PC;
-    uint8_t oldstate = top->spdc1016__DOT__cpu__DOT__state;
-    uint8_t oldnmi = top->spdc1016__DOT__nmi;
-    bool oldirq = top->spdc1016__DOT__hub__DOT__irqcnter != 0;
+    uint16_t oldpc = top->rootp->spdc1016__DOT__cpu__DOT__PC;
+    uint8_t oldstate = top->rootp->spdc1016__DOT__cpu__DOT__state;
+    uint8_t oldnmi = top->rootp->spdc1016__DOT__nmi;
+    bool oldirq = top->rootp->spdc1016__DOT__hub__DOT__irqcnter != 0;
     uint8_t x = 0, y = 0;
     unsigned long long totalcycle = 0, oldcycle = 0;
     while (1) {
@@ -183,7 +186,7 @@ int main(int argc, char* argv[]) {
         top->clk4x = 0;
         top->eval();
 
-        if (!oldclk && top->spdc1016__DOT__clk) {
+        if (!oldclk && top->rootp->spdc1016__DOT__clk) {
             if (oldstate == 12) {
 //                 if (oldcycle)
 //                     LogEx("\t%d\n", totalcycle - oldcycle);
@@ -195,11 +198,11 @@ int main(int argc, char* argv[]) {
                 //if (top->spdc1016__DOT__hub__DOT__irqcnter && !oldirq) {
                 //    PrependLogEx("ggv wanna %02X IRQ.\n", top->spdc1016__DOT__hub__DOT__io_int_status);
                 //}
-                oldirq = top->spdc1016__DOT__hub__DOT__irqcnter != 0;
+                oldirq = top->rootp->spdc1016__DOT__hub__DOT__irqcnter != 0;
             }
-            oldpc = top->spdc1016__DOT__cpu__DOT__PC;
-            oldstate = top->spdc1016__DOT__cpu__DOT__state;
-            oldnmi = top->spdc1016__DOT__nmi;
+            oldpc = top->rootp->spdc1016__DOT__cpu__DOT__PC;
+            oldstate = top->rootp->spdc1016__DOT__cpu__DOT__state;
+            oldnmi = top->rootp->spdc1016__DOT__nmi;
             totalcycle++;
         }
 
@@ -239,8 +242,8 @@ int main(int argc, char* argv[]) {
         oldcp = top->lcd_CP;
         oldlp = top->lcd_LP;
         oldfp = top->lcd_FP;
-        oldclk = top->spdc1016__DOT__clk;
-        olddi = top->spdc1016__DOT__cpu_di;
+        oldclk = top->rootp->spdc1016__DOT__clk;
+        olddi = top->rootp->spdc1016__DOT__cpu_di;
     }
 
     top->final();  // simulation done

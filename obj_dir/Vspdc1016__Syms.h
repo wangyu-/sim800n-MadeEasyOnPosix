@@ -7,29 +7,32 @@
 #ifndef VERILATED_VSPDC1016__SYMS_H_
 #define VERILATED_VSPDC1016__SYMS_H_  // guard
 
-#include "verilated_heavy.h"
+#include "verilated.h"
 
-// INCLUDE MODULE CLASSES
+// INCLUDE MODEL CLASS
+
 #include "Vspdc1016.h"
 
-// SYMS CLASS
-class Vspdc1016__Syms : public VerilatedSyms {
+// INCLUDE MODULE CLASSES
+#include "Vspdc1016___024root.h"
+
+// SYMS CLASS (contains all model state)
+class alignas(VL_CACHE_LINE_BYTES)Vspdc1016__Syms final : public VerilatedSyms {
   public:
+    // INTERNAL STATE
+    Vspdc1016* const __Vm_modelp;
+    VlDeleter __Vm_deleter;
+    bool __Vm_didInit = false;
 
-    // LOCAL STATE
-    const char* __Vm_namep;
-    bool __Vm_didInit;
+    // MODULE INSTANCE STATE
+    Vspdc1016___024root            TOP;
 
-    // SUBCELL STATE
-    Vspdc1016*                     TOPp;
-
-    // CREATORS
-    Vspdc1016__Syms(VerilatedContext* contextp, Vspdc1016* topp, const char* namep);
+    // CONSTRUCTORS
+    Vspdc1016__Syms(VerilatedContext* contextp, const char* namep, Vspdc1016* modelp);
     ~Vspdc1016__Syms();
 
     // METHODS
-    inline const char* name() { return __Vm_namep; }
-
-} VL_ATTR_ALIGNED(VL_CACHE_LINE_BYTES);
+    const char* name() { return TOP.name(); }
+};
 
 #endif  // guard
