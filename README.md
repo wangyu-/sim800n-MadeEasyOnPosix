@@ -1,4 +1,6 @@
 # sim800n 
+<img width="485" alt="image" src="https://github.com/user-attachments/assets/ef66defa-9ab9-46f2-81ae-66366a8b9c72" />
+
 本项目是sim800(文曲星cc800模拟器)的verilog版。 利用verilator来在电脑上模拟运行。（不需要fpga开发板）
 
 原作者： 曾半仙
