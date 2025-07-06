@@ -12,7 +12,7 @@ typedef struct tagLCDStripe {
 class MyLCDView
 {
 public:
-    MyLCDView(const wchar_t* jsonpath);
+    MyLCDView(const char* jsonpath);
     ~MyLCDView();
 private:
     TLCDStripe fLCDStripes[80];
@@ -23,13 +23,13 @@ private:
     int fLCDWidth, fLCDHeight;
     bool fPixel[160*80]; // TODO: bit or gray
 public:
-    void loadStripeTexture(const wchar_t* texpath, SDL_Renderer* render);
+    void loadStripeTexture(const char * texpath, SDL_Renderer* render);
     void setPixel(int x, int y, bool on);
     void paint(SDL_Renderer* render, bool lcdon);
     int getLCDWidth();
     int getLCDHeight();
 private:
-    void initLCDStripe(const wchar_t* jsonpath);
+    void initLCDStripe(const char * jsonpath);
 };
 
 #endif

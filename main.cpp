@@ -6,6 +6,8 @@
 #include "Vspdc1016.h"
 #include "Vspdc1016___024root.h"
 
+#define FULLLCD
+
 // screen dimensions
 const int H_RES = 160;
 const int V_RES = 80;
@@ -117,7 +119,7 @@ int main(int argc, char* argv[]) {
     SDL_Renderer* sdl_renderer = NULL;
     SDL_Texture*  sdl_texture = NULL;
 #ifdef FULLLCD
-    MyLCDView*    lcdview = new MyLCDView(L"lcdstripe_slice_w938.json");
+    MyLCDView*    lcdview = new MyLCDView("res/lcdstripe_slice_w1313.json");
     sdl_window = SDL_CreateWindow("sim800n", SDL_WINDOWPOS_CENTERED,
         SDL_WINDOWPOS_CENTERED, lcdview->getLCDWidth(), lcdview->getLCDHeight(), SDL_WINDOW_SHOWN);
 #else
@@ -135,7 +137,7 @@ int main(int argc, char* argv[]) {
         return 1;
     }
 #ifdef FULLLCD
-    lcdview->loadStripeTexture(L"lcdstripe_w938.png", sdl_renderer);
+    lcdview->loadStripeTexture("res/lcdstripe_w1313.bmp", sdl_renderer);
 #else
     sdl_texture = SDL_CreateTexture(sdl_renderer, SDL_PIXELFORMAT_RGBA8888,
         SDL_TEXTUREACCESS_TARGET, H_RES, V_RES);

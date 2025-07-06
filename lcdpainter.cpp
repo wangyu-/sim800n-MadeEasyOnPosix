@@ -1,5 +1,6 @@
 //#include <windows.h>
 //#include <gdiplus.h>
+#include <cstdio>
 #include <fcntl.h>
 //#include <io.h>
 
@@ -23,7 +24,7 @@ TLCDStripe getCoordInfoWithKey(json::jobject& json, const char* key);
 TStripeMiscInfo getStripeMiscInfo(json::jobject& json);
 void quickdump(unsigned int addr, const unsigned char *data, unsigned int amount);
 
-MyLCDView::MyLCDView(const wchar_t* jsonpath)
+MyLCDView::MyLCDView(const char* jsonpath)
     : fPixel{0,}
     , fLCDTexture(0)
 {
@@ -37,8 +38,66 @@ MyLCDView::~MyLCDView()
     }
 }
 
-void MyLCDView::loadStripeTexture(const wchar_t* texpath, SDL_Renderer* render)
+uint32_t getpixel(SDL_Surface *surface, int x, int y)
 {
+    int bpp = surface->format->BytesPerPixel;
+    /* Here p is the address to the pixel we want to retrieve */
+    Uint8 *p = (Uint8 *)surface->pixels + y * surface->pitch + x * bpp;
+
+    switch (bpp)
+    {
+        case 1:
+            return *p;
+            break;
+
+        case 2:
+            return *(Uint16 *)p;
+            break;
+
+        case 3:
+        if (SDL_BYTEORDER == SDL_BIG_ENDIAN)
+            return p[0] << 16 | p[1] << 8 | p[2];
+        else
+            return p[0] | p[1] << 8 | p[2] << 16;
+            break;
+
+        case 4:
+            return *(uint32_t *)p;
+            break;
+
+        default:
+            assert(false);
+            return 0;       /* shouldn't happen, but avoids warnings */
+    }
+}
+
+void MyLCDView::loadStripeTexture(const char * texpath, SDL_Renderer* render)
+{
+    SDL_Surface* surface = SDL_LoadBMP(texpath);
+    if (surface == NULL) {
+        printf("file %s open failed: %s\n", texpath, SDL_GetError());
+        exit(-1);
+    }
+
+    int width = surface->w;
+    int height = surface->h;
+    printf("w %d h %d\n", width, height);
+    
+    fLCDTexture = SDL_CreateTexture(render, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, width, height);
+    void* buffer = malloc(width * height * 4);
+    uint32_t* bufptr = (uint32_t*)buffer;
+
+    for(int i = 0; i < height; i++){
+        for(int j=0;j<width;j++){
+            uint32_t color= getpixel(surface, j, i);
+            /*printf("R: %d G: %d B: %d A: %d\n", 
+                (color >> 16) & 0xFF, (color >> 8) & 0xFF, color & 0xFF, (color >> 24) & 0xFF);*/
+            *bufptr = color << 8 | color >> 24;
+            bufptr++;   
+        }
+    }
+    SDL_UpdateTexture(fLCDTexture, NULL, buffer, width * 4);
+
     /*Gdiplus::GdiplusStartupInput gdiplusStartupInput;
     ULONG_PTR gdiplusToken;
     GdiplusStartup(&gdiplusToken, &gdiplusStartupInput, NULL);
@@ -69,8 +128,20 @@ void MyLCDView::loadStripeTexture(const wchar_t* texpath, SDL_Renderer* render)
 
 #define COPYMOVESSD(dst, src, step) fLCDStripes[dst] = fLCDStripes[src]; fLCDStripes[dst].left += step
 
-void MyLCDView::initLCDStripe(const wchar_t* jsonpath)
+void MyLCDView::initLCDStripe(const char* jsonpath)
 {
+    FILE *f = fopen(jsonpath, "rb");
+    if(f==0) {
+        printf("file %s not exist!\n", jsonpath);
+        exit(-1);
+    }
+    fseek(f, 0, SEEK_END);
+    long fsize = ftell(f);
+    fseek(f, 0, SEEK_SET);  /* same as rewind(f); */
+    char* jsontext = (char*)malloc(fsize + 1);
+    fread(jsontext, fsize, 1, f);
+    jsontext[fsize] = 0;
+    fclose(f);
     /*struct _stat64 st;
     if (_wstat64(jsonpath, &st) == -1) {
         return;
@@ -78,8 +149,8 @@ void MyLCDView::initLCDStripe(const wchar_t* jsonpath)
     char* jsontext = (char*)malloc(st.st_size + 1);
     int fd = _wopen(jsonpath, O_RDONLY);
     int readed = _read(fd, jsontext, st.st_size);
-    _close(fd);
-    jsontext[readed] = 0;
+    _close(fd);*/
+    //jsontext[readed] = 0;
     json::jobject json = json::jobject::parse(jsontext);
     free(jsontext);
 
@@ -207,7 +278,7 @@ void MyLCDView::initLCDStripe(const wchar_t* jsonpath)
     fLCDHeight = gap.lcd.height;
 
     fLCDPixelPoint.x = Pixel.left;
-    fLCDPixelPoint.y = Pixel.top;*/
+    fLCDPixelPoint.y = Pixel.top;
 }
 
 void MyLCDView::setPixel(int x, int y, bool on)
