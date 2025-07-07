@@ -320,11 +320,13 @@ void MyLCDView::paint(SDL_Renderer* render, bool lcdon)
 
 int MyLCDView::getLCDWidth()
 {
+    printf("real width %d\n", fLCDWidth);
     return fLCDWidth;
 }
 
 int MyLCDView::getLCDHeight()
 {
+    printf("real height %d\n", fLCDHeight);
     return fLCDHeight;
 }
 
