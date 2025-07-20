@@ -1,5 +1,5 @@
 # sim800n 
-<img width="485" alt="image" src="https://github.com/user-attachments/assets/ef66defa-9ab9-46f2-81ae-66366a8b9c72" />
+<img width="700" alt="image" src="https://github.com/user-attachments/assets/3899a34e-256d-4a2f-83ac-6f8c6aa396d0" />
 
 本项目是sim800(文曲星cc800模拟器)的verilog版。 利用verilator来在电脑上模拟运行。（不需要fpga开发板）
 
@@ -7,7 +7,7 @@
 
 本repo改动：
 1. 支持最新的verilator5
-2. 去除不重要的non-posix代码，让项目可以在mac和linux上轻易编译出来
+2. non-posix代码移植为POSIX+SDL，让项目可以在mac和linux上轻易编译出来
 3. 增加了从.v转换成.cpp的脚本和说明
 
 
